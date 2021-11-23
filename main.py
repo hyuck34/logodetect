@@ -18,17 +18,18 @@ class Main(object):
     def predict(self, skill_input):
         bytes_buf = io.BytesIO(skill_input)
         uname = str(uuid.uuid4())
-        tempfile = uname + ".png"
+        tempfile = uname + ".jpg"
         with open(tempfile, "wb") as tempf:
             tempf.write( bytes_buf.read())
         
         im = Image.open( tempfile)
         imgsize = [ im.height, im.width]
+        print('image format={0}'.format( im.format))
         
-        detect.run( weights='models/samsung_logo_1121.pt', name=uname, save_conf=True, 
+        detect.run( weights='models/samsung_logo_1123m.pt', name=uname, save_conf=True, 
                    source=tempfile, imgsz=imgsize, device='cpu', conf_thres=0.5, 
                    project=self.rootdir+'/runs/detect', save_txt=True )
-        os.remove(uname+".png")
+        os.remove(uname+".jpg")
         result = { }
         result['logos'] = []
         print(os.getcwd())
