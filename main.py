@@ -27,19 +27,15 @@ class Main(object):
         imgsize = [ im.height, im.width]
         tempfile = "{0}.{1}".format( uname, im.format).lower()
         shutil.move( uname, tempfile)
-        
         #print('image format={0}'.format( im.format))
-        
-        detect.run( weights='models/samsung_logo_1123m.pt', name=uname, save_conf=True, 
+        imgsize = detect.run( weights='models/best.pt', name=uname, save_conf=True, 
                    source=tempfile, imgsz=imgsize, device='cpu', conf_thres=0.5, 
                    project=self.rootdir+'/runs/detect', save_txt=True )
         os.remove(tempfile)
         result = { }
         result['logos'] = []
-        print(os.getcwd())
-        im2 = Image.open( self.rootdir + "/runs/detect/" +uname +"/"+ tempfile)
-        hratio = im2.width / im.width
-        vratio = im2.height / im.height
+        #print(os.getcwd())
+        #print(imgsize)
 
         # no logo detected... 
         if not os.path.exists(self.rootdir+"/runs/detect/"+uname+"/labels/" + uname + ".txt"):
@@ -52,18 +48,17 @@ class Main(object):
                 items = l.split()
                 obj["class"] = self.labels[ int(items[0])]
                 obj["confidence"] = float(items[5])
-                obj["x"] = int(im2.width * float(items[1]))
-                obj["y"] = int(im2.height * float(items[2]))
-                obj["width"] = int(im2.width * float(items[3]))
-                obj["height"] = int(im2.height * float(items[4]))
+                obj["width"] = int(im.width * float(items[3]))
+                obj["height"] = int(im.height * float(items[4]))
+                obj["x"] = int(im.width * float(items[1])) - int(obj['width']/2)
+                obj["y"] = int(im.height * float(items[2])) - int(obj['height']/2)
                 result["logos"].append( obj)
         result["message"] = "ok"
-        result["height"] = im2.height
-        result['width'] = im2.width
-        print( result)
+        result["height"] = im.height
+        result['width'] = im.width
+        #print( result)
         shutil.rmtree(self.rootdir+"/runs/detect/"+uname, ignore_errors=True)
         return result
-
 
 
 if __name__ == '__main__':
