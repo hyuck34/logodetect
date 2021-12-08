@@ -24,7 +24,7 @@ class Main(object):
             tempf.write( bytes_buf.read())
         
         im = Image.open( tempfile)
-        imgsize = [ im.height, im.width]
+        imgsize = [1216, 1216] #[ im.height, im.width]
         tempfile = "{0}.{1}".format( uname, im.format).lower()
         shutil.move( uname, tempfile)
         #print('image format={0}'.format( im.format))
